@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sum Calculator</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 40px;
+        }
+        .twitch-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #000;
+            text-align: center;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 220px;
+        }
+        .input-label {
+            font-size: 20px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        input, select {
+            width: 200px;
+            height: 40px;
+            font-size: 20px;
+            text-align: center;
+            border: 2px solid green;
+            outline: none;
+            color: black;
+            margin-bottom: 10px;
+        }
+        .output-container {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            border: 2px solid gray;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+        }
+        .output-section {
+            margin: 0 20px;
+        }
+        .output-field {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 5px 0;
+            background-color: #d3d3d3;
+            padding: 10px;
+            width: 250px;
+            text-align: center;
+            border-radius: 5px;
+        }
+    </style>
+    <script src="https://embed.twitch.tv/embed/v1.js"></script>
+</head>
+<body>
+    <div class="twitch-container">
+        <div id="twitch-embed"></div>
+        <script type="text/javascript">
+            new Twitch.Embed("twitch-embed", {
+                width: "100%",
+                height: 200,
+                channel: "bernstone",
+                parent: ["yourwebsite.com"]
+            });
+        </script>
+    </div>
+    
+    <div class="input-container">
+        <span class="input-label">Worm:</span>
+        <input type="number" id="wormInput" oninput="calculateBait()">
+        
+        <span class="input-label">Sell Price Bait T1:</span>
+        <input type="number" id="sellPriceT1" oninput="calculateBait()">
+        
+        <span class="input-label">Sell Price Bait T3:</span>
+        <input type="number" id="sellPriceT3" oninput="calculateBait()">
+        
+        <span class="input-label">Sell Price Bait T5:</span>
+        <input type="number" id="sellPriceT5" oninput="calculateBait()">
+        
+        <span class="input-label">Active Premium?</span>
+        <select id="activePremium" onchange="calculateBait()">
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+        </select>
+    </div>
+    
+    <div class="output-container">
+        <div class="output-section">
+            <div class="output-field">Bait T1 = <span id="baitT1">0</span></div>
+            <div class="output-field">Bait T3 = <span id="baitT3">0</span></div>
+            <div class="output-field">Bait T5 = <span id="baitT5">0</span></div>
+        </div>
+        <div class="output-section">
+            <div class="output-field">Profit T1 = <span id="profitT1">0 (0%)</span></div>
+            <div class="output-field">Profit T3 = <span id="profitT3">0 (0%)</span></div>
+            <div class="output-field">Profit T5 = <span id="profitT5">0 (0%)</span></div>
+        </div>
+    </div>
+    
+    <script>
+        function formatNumber(num) {
+            return num.toLocaleString();
+        }
+
+        function calculateBait() {
+            let wormValue = parseInt(document.getElementById('wormInput').value) || 0;
+            let activePremium = document.getElementById('activePremium').value === "Yes" ? 0.935 : 0.895;
+            
+            let tiers = [1, 3, 5];
+            tiers.forEach(tier => {
+                let baitValue = wormValue * (tier === 1 ? 1 : tier === 3 ? 5 : 25);
+                let sellPrice = parseInt(document.getElementById(`sellPriceT${tier}`).value) || 0;
+                let silverProfit = (sellPrice * activePremium) - baitValue;
+                let profitPercent = ((silverProfit / baitValue) * 100).toFixed(2);
+                
+                document.getElementById(`baitT${tier}`).innerText = formatNumber(baitValue);
+                document.getElementById(`profitT${tier}`).innerText = `${formatNumber(silverProfit)} (${profitPercent}%)`;
+            });
+        }
+    </script>
+</body>
+</html>
